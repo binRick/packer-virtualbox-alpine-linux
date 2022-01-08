@@ -1,0 +1,98 @@
+{
+  "variables": {
+    "vm_name": "xxxxxxxxNAMExxxxxxxxxxx",
+    "root_password": "vagrant",
+    "ssh_password": "vagrant",
+    "ssh_username": "vagrant",
+    "output_path": "./output",
+    "cpus": "4",
+    "disk_size": "8240",
+    "iso_checksum": "d568c6c71bb1eee0f65cdf40088daf57032e24f1e3bd2cf8a813f80d2e9e4eab",
+    "iso_checksum_type": "sha256",
+    "iso_download_url": "http://dl-cdn.alpinelinux.org/alpine/v3.14/releases/x86_64/alpine-virt-3.14.0-x86_64.iso",
+    "iso_local_url": "../../iso/alpine-virt-3.14.0-x86_64.iso",
+    "memory": "4096",
+    "ssh_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDbbBHjqy6NB4O6K7guEzFUeGZtZqoFu5I+gZhZ2nB8c+AeWaQguvh8PuaZS+c21MxY49TmiTH4Xl0Tt6BrEDswkD3YS5zuALsn7TGOwFexsdK0s+48+ysxtLnL+xT4u0eR1yeb1aGWccja2OzObOtCIqoMK4gzrLu0MujfHiZBKoMKUNEGnRBKubqI7D1NSF2FgHo0i5g4d7+WehI+LEq6/Iv1O9dXWmXmbSiDyP4r2QZGvZkQlPpM0LRzROT24EDT5/AknHo9czIkM72nTnxhhItYFVx+edBDxVYHn0Cy6i1tolw4g6Kz40WElT417gI16Jnqo+kprw/1u6Gv1uJt mac"
+  },
+  "builders": [
+    {
+      "boot_command": [
+        "root<enter><wait>",
+        "ifconfig eth0 up && udhcpc -i eth0<enter><wait5>",
+        "wget http://{{ .HTTPIP }}:{{ .HTTPPort }}/answers<enter><wait>",
+        "setup-apkrepos -1<enter><wait5>",
+        "ERASE_DISKS='/dev/sda' setup-alpine -f $PWD/answers<enter><wait5>",
+        "{{user `ssh_password`}}<enter><wait>",
+        "{{user `ssh_password`}}<enter><wait30>",
+        "mount /dev/sda3 /mnt<enter>",
+        "echo 'PermitRootLogin yes' >> /mnt/etc/ssh/sshd_config<enter>",
+        "umount /mnt ; reboot<enter>"
+      ],
+      "boot_wait": "30s",
+      "communicator": "ssh",
+      "disk_size": "{{user `disk_size`}}",
+      "format": "ova",
+      "guest_additions_mode": "disable",
+      "guest_os_type": "Linux26_64",
+      "headless": false,
+      "http_directory": "http",
+      "iso_checksum": "{{user `iso_checksum_type`}}:{{user `iso_checksum`}}",
+      "iso_urls": ["{{user `iso_local_url`}}", "{{user `iso_download_url`}}"],
+      "keep_registered": "false",
+      "shutdown_command": "/sbin/poweroff",
+      "ssh_password": "{{user `ssh_password`}}",
+      "ssh_timeout": "10m",
+      "ssh_username": "root",
+      "type": "virtualbox-iso",
+      "vboxmanage": [
+        ["modifyvm", "{{.Name}}", "--memory", "{{user `memory`}}"],
+        ["modifyvm", "{{.Name}}", "--cpus", "{{user `cpus`}}"],
+        ["modifyvm", "{{.Name}}", "--rtcuseutc", "on"],
+        ["modifyvm", "{{.Name}}", "--graphicscontroller", "vmsvga"],
+        ["modifyvm", "{{.Name}}", "--vram", "6"],
+        ["modifyvm", "{{.Name}}", "--vrde", "off"],
+        ["modifyvm", "{{.Name}}", "--nic1", "nat"],
+        ["modifyvm", "{{.Name}}", "--natpf1", "sshd,tcp,,45890,,22"],
+        ["modifyvm", "{{.Name}}", "--uart1", "0x3F8", "4"],
+        ["modifyvm", "{{.Name}}", "--uartmode1", "file", "/tmp/console-xxxxxxxxNAMExxxxxxxxxxx.log"]        
+      ],
+      "vm_name": "{{user `vm_name`}}"
+    }
+  ],
+  "description": "Build base Alpine Linux x86_64",
+  "provisioners": [
+    {
+      "inline": [
+        "echo http://dl-cdn.alpinelinux.org/alpine/v3.14/community >> /etc/apk/repositories",
+        "apk update",
+        "apk add curl bash sudo nodejs npm py3-pip",
+        "apk add abduco ansible autoconf automake bash bat bubblewrap cargo coreutils curl direnv docker docker-cli docker-cli-buildx docker-compose docker-registry dvtm e2tools elogind execline execline-dev file fish gcc git go gocryptfs htop ifupdown-ng-wireguard img jansson jansson-dev jq libuser libvirt-daemon linux-headers lxc make man-db-doc mandoc mariadb musl-dev ngrep nload nodejs npm openssh-client openssh-server openssl pango pkgconfig psmisc py3-dockerpty py3-pip restic ripgrep rsync runc-doc rust s6 s6-dns s6-ipcserver s6-linux-init s6-linux-init-dev s6-linux-utils s6-networking s6-networking-dev s6-networking-static s6-openrc s6-portable-utils s6-rc s6-rc-dev s6-rc-static setpriv shadow skalibs skalibs-dev socat strace sudo sysstat tcpdump termrec tmux ttyd util-linux vim virt-install virtualbox-guest-additions vnstat wget wireguard-tools wireguard-tools-bash-completion wireguard-tools-doc wireguard-tools-wg-quick zsh gcc g++ libc-dev musl-dev  build-base  mpc1-dev make build-base",
+        "npm i -g nodemon fx",
+        "pip3 install json2yaml j2cli",
+        "rc-update add docker default",
+        "rc-update add virtualbox-guest-additions",
+        "echo '%wheel ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/wheel",
+        "user={{user `ssh_username`}}",
+        "echo Add user $user with NOPASSWD sudo",
+        "adduser $user --disabled-password",
+        "echo '{{user `ssh_username`}}:{{user `ssh_password`}}' | chpasswd",
+        "adduser $user wheel",
+        "echo add ssh key",
+        "cd ~{{user `ssh_username`}}",
+        "mkdir .ssh",
+        "mkdir -p /root/.ssh",
+        "chmod 700 .ssh",
+        "chmod 700 /root/.ssh",
+        "echo {{user `ssh_key`}} > .ssh/authorized_keys",
+        "echo {{user `ssh_key`}} > /root/.ssh/authorized_keys",
+        "chown -R $user .ssh",
+        "chown -R root /root/.ssh",
+        "wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O /tmp/oh-my-zsh-install.sh",
+        "sh /tmp/oh-my-zsh-install.sh --unattended",
+        "echo {{user `root_password`}} | chsh -s /bin/zsh root",
+        ""        
+      ],
+      "type": "shell"
+    }
+  ]
+}
