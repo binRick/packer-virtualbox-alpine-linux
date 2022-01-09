@@ -1,0 +1,13 @@
+output-vagrant/
+output-virtualbox-iso/
+packer_cache/
+.vagrant/
+*.log
+.*.json
+.POST-*
+.envrc
+.restic
+.v
+.attic
+secrets
+output-virtualbox-iso
