@@ -1,6 +1,6 @@
 {
   "variables": {
-    "base_pkgs": "bash virtualbox-guest-additions zsh git sudo curl libuser shadow vim ripgrep cmake make gcc musl-dev libc-dev coreutils wget bat autoconf automake libseccomp-static libseccomp jsonrpc-glib-dev cjson-dev json-c-dev jsonnet-dev libseccomp libseccomp-dev libseccomp-static",
+    "base_pkgs": "bash sudo curl wget shadow git zsh libuser virtualbox-guest-additions",
     "apk_add_args": "--progress",
     "vm_name": "xxxxxxxxNAMExxxxxxxxxxx",
     "apk_proxy_host": "{{user `APK_PROXY_HOST`}}",

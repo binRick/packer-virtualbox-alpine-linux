@@ -11,3 +11,6 @@ packer_cache/
 .attic
 secrets
 output-virtualbox-iso
+.*.swp
+*.ova
+.restic-container

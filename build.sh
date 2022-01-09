@@ -92,16 +92,7 @@ cmd="passh -L $PACKER_LOG \
 
 ansi --blue --bold "$cmd" && eval "$cmd"
 
-if [[ -d "$RESTIC_REPOSITORY" ]]; then
-  RESTIC_DIR="$RESTIC_REPOSITORY"
-else
-  RESTIC_DIR=$(pwd)/.restic
-fi
-export RESTIC_REPOSITORY="$RESTIC_DIR"
-
-[[ -d $RESTIC_DIR ]] || restic init
-restic cache --cleanup
-command cat $OVA | restic backup --stdin --stdin-filename "$(basename $OVA)" --tag "distro:$DISTRO" --tag "FINAL_NAME:$FINAL_NAME"
+./vbox-backup-ova.sh $OVA
 
 cmd="passh -L $IMPORT_LOG VBoxManage import $OVA --vsys 0 --ostype Linux26_64 --vmname '$FINAL_NAME'"
 ansi --yellow --italic --bg-black "$cmd" && eval "$cmd"
@@ -109,7 +100,19 @@ ansi --yellow --italic --bg-black "$cmd" && eval "$cmd"
 cmd="passh -L $START_LOG VBoxManage startvm --type headless $FINAL_NAME"
 ansi --red --bg-black "$cmd" && eval "$cmd"
 
+exit 0
+
 sleep 15
 
-./ssh-vbox-vm.sh "$FINAL_NAME" ip addr
+OK=
+qty=0
+while [[ "$OK" != 1 ]]; do
+  timeout 5 passh ./ssh-vbox-vm.sh "$FINAL_NAME" ip addr && OK=1
+  qty=$(($qty+1))
+  [[ "$qty" -gt 120 ]] && exit 1
+  sleep 1
+done  
 
+
+echo OK
+exit 0
