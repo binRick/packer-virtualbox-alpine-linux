@@ -92,13 +92,19 @@ cmd="passh -L $PACKER_LOG \
 
 ansi --blue --bold "$cmd" && eval "$cmd"
 
-./vbox-backup-ova.sh $OVA
-
+#./vbox-backup-ova.sh $OVA
+OVA="$(\ls -tr output-virtualbox-iso/*.ova|tail -n1)"
 cmd="passh -L $IMPORT_LOG VBoxManage import $OVA --vsys 0 --ostype Linux26_64 --vmname '$FINAL_NAME'"
 ansi --yellow --italic --bg-black "$cmd" && eval "$cmd"
 
 cmd="passh -L $START_LOG VBoxManage startvm --type headless $FINAL_NAME"
 ansi --red --bg-black "$cmd" && eval "$cmd"
+
+./vbox-gen-ssh-config-include.sh $FINAL_NAME |tee -a ~/.ssh/config
+
+sleep 15
+
+timeout 5 ssh -qAtt root@$FINAL_NAME hostname -f
 
 exit 0
 

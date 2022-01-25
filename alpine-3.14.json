@@ -1,8 +1,8 @@
 {
   "variables": {
-    "base_pkgs": "bash sudo curl wget shadow git zsh libuser virtualbox-guest-additions",
+    "base_pkgs": "bash sudo curl wget shadow git zsh libuser virtualbox-guest-additions rsync wireguard-tools git",
     "apk_add_args": "--progress",
-    "vm_name": "xxxxxxxxNAMExxxxxxxxxxx",
+    "vm_name": "{{user `vm_name` }}",
     "apk_proxy_host": "{{user `APK_PROXY_HOST`}}",
     "apk_proxy_port": "{{user `APK_PROXY_PORT`}}",
     "root_password": "vagrant",

@@ -4,7 +4,7 @@ OVA=$1
 
 [[ -f .envrc ]] && source .envrc
 
-[[ -d $RESTIC_REPOSITORY ]] || restic init
+#[[ -d $RESTIC_REPOSITORY ]] || restic init
 restic cache --cleanup
 cmd="command cat $OVA | restic backup --stdin --stdin-filename '$(basename $OVA)'"
 

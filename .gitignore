@@ -14,3 +14,4 @@ output-virtualbox-iso
 .*.swp
 *.ova
 .restic-container
+wg.sh
