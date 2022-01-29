@@ -1,6 +1,6 @@
 {
   "variables": {
-    "base_pkgs": "bash sudo curl wget shadow git zsh libuser virtualbox-guest-additions rsync wireguard-tools git automake docker docker-cli go ripgrep pkgconf jo jq",
+    "base_pkgs": "bash sudo curl wget shadow git zsh libuser virtualbox-guest-additions rsync wireguard-tools git automake docker docker-cli go ripgrep pkgconf jo jq nagios-plugins-icmp nagios-plugins-tcp ttyd",
     "apk_add_args": "--progress",
     "vm_name": "{{user `vm_name` }}",
     "apk_proxy_host": "{{user `APK_PROXY_HOST`}}",
