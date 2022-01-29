@@ -55,4 +55,3 @@ cmd="command ssh -oControlMaster=no  -R 127.0.0.1:8000:127.0.0.1:8000 -Att $HOST
 
 ansi --yellow --italic --bg-black "$cmd"
 eval "$cmd"
-

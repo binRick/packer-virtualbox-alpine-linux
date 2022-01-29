@@ -5,9 +5,9 @@ NOW=$(date +%s)
 OVA=$VM-$NOW.ova
 [[ -f .envrc ]] && source .envrc
 
-cleanup(){
-  [[ -f $OVA ]] && unlink $OVA
-  true
+cleanup() {
+	[[ -f $OVA ]] && unlink $OVA
+	true
 }
 
 trap cleanup EXIT

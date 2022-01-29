@@ -8,10 +8,7 @@ OVA=$1
 restic cache --cleanup
 cmd="command cat $OVA | restic backup --stdin --stdin-filename '$(basename $OVA)'"
 
-
 ansi --yellow --italic "$cmd"
 eval "$cmd"
 
-
 echo OK
-

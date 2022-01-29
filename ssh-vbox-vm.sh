@@ -6,7 +6,7 @@ CMD="${@:-}"
 PORT=$(./vbox-get-vm-ssh-port.sh "$VM")
 RCMD=
 if [[ "$CMD" != "" ]]; then
-  RCMD="-oRemoteCommand='sh -c \"$CMD\"'"
+	RCMD="-oRemoteCommand='sh -c \"$CMD\"'"
 fi
 cmd="command ssh $RCMD \
   -oStrictHostKeyChecking=no \
@@ -24,5 +24,5 @@ cmd="command ssh $RCMD \
   -oExitOnForwardFailure=yes \
     '$VM'"
 
->&2 ansi --yellow --italic --bg-black "$cmd"
+ansi >&2 --yellow --italic --bg-black "$cmd"
 eval "$cmd"

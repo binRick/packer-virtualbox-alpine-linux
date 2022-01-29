@@ -3,8 +3,7 @@ set -oeu pipefail
 NAME=$1
 SSH_PORT=$(./vbox-get-vm-ssh-port.sh $NAME)
 
-
-cat << EOF
+cat <<EOF
 Host $NAME
   Port $SSH_PORT
   LogLevel ERROR
@@ -15,4 +14,3 @@ Host $NAME
   ControlPath ~/.ssh/%r@%h-%p
   ControlPersist 3600
 EOF
-
